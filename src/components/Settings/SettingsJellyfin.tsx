@@ -114,7 +114,8 @@ const SettingsJellyfin: React.FC<SettingsJellyfinProps> = ({
     hostname: Yup.string()
       .nullable()
       .required(intl.formatMessage(messages.validationHostnameRequired)),
-    port: Yup.number().when(['hostname'], {
+    port: Yup.number()/* @ts-ignore */
+.when(['hostname'], {
       is: (value: unknown) => !!value,
       then: Yup.number()
         .typeError(intl.formatMessage(messages.validationPortRequired))

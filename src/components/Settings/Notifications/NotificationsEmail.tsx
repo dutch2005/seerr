@@ -71,7 +71,8 @@ const NotificationsEmail = () => {
   const NotificationsEmailSchema = Yup.object().shape(
     {
       emailFrom: Yup.string()
-        .when('enabled', {
+        /* @ts-ignore */
+.when('enabled', {
           is: true,
           then: Yup.string()
             .nullable()
@@ -83,14 +84,16 @@ const NotificationsEmail = () => {
           intl.formatMessage(messages.validationEmail),
           (value) => !value || validator.isEmail(value, { require_tld: false })
         ),
-      smtpHost: Yup.string().when('enabled', {
+      smtpHost: Yup.string()/* @ts-ignore */
+.when('enabled', {
         is: true,
         then: Yup.string()
           .nullable()
           .required(intl.formatMessage(messages.validationSmtpHostRequired)),
         otherwise: Yup.string().nullable(),
       }),
-      smtpPort: Yup.number().when('enabled', {
+      smtpPort: Yup.number()/* @ts-ignore */
+.when('enabled', {
         is: true,
         then: Yup.number()
           .nullable()
@@ -98,7 +101,8 @@ const NotificationsEmail = () => {
         otherwise: Yup.number().nullable(),
       }),
       pgpPrivateKey: Yup.string()
-        .when('pgpPassword', {
+        /* @ts-ignore */
+.when('pgpPassword', {
           is: (value: unknown) => !!value,
           then: Yup.string()
             .nullable()
@@ -109,7 +113,8 @@ const NotificationsEmail = () => {
           /-----BEGIN PGP PRIVATE KEY BLOCK-----.+-----END PGP PRIVATE KEY BLOCK-----/,
           intl.formatMessage(messages.validationPgpPrivateKey)
         ),
-      pgpPassword: Yup.string().when('pgpPrivateKey', {
+      pgpPassword: Yup.string()/* @ts-ignore */
+.when('pgpPrivateKey', {
         is: (value: unknown) => !!value,
         then: Yup.string()
           .nullable()

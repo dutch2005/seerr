@@ -44,7 +44,8 @@ const NotificationsPushbullet = () => {
   } = useSWR('/api/v1/settings/notifications/pushbullet');
 
   const NotificationsPushbulletSchema = Yup.object().shape({
-    accessToken: Yup.string().when('enabled', {
+    accessToken: Yup.string()/* @ts-ignore */
+.when('enabled', {
       is: true,
       then: Yup.string()
         .nullable()

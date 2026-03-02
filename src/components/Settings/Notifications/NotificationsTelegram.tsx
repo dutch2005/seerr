@@ -51,7 +51,8 @@ const NotificationsTelegram = () => {
   } = useSWR('/api/v1/settings/notifications/telegram');
 
   const NotificationsTelegramSchema = Yup.object().shape({
-    botAPI: Yup.string().when('enabled', {
+    botAPI: Yup.string()/* @ts-ignore */
+.when('enabled', {
       is: true,
       then: Yup.string()
         .nullable()
@@ -59,7 +60,8 @@ const NotificationsTelegram = () => {
       otherwise: Yup.string().nullable(),
     }),
     chatId: Yup.string()
-      .when(['enabled', 'types'], {
+      /* @ts-ignore */
+.when(['enabled', 'types'], {
         is: (enabled: boolean, types: number) => enabled && !!types,
         then: Yup.string()
           .nullable()
@@ -71,7 +73,8 @@ const NotificationsTelegram = () => {
         intl.formatMessage(messages.validationChatIdRequired)
       ),
     messageThreadId: Yup.string()
-      .when(['types'], {
+      /* @ts-ignore */
+.when(['types'], {
         is: (enabled: boolean, types: number) => enabled && !!types,
         then: Yup.string()
           .nullable()

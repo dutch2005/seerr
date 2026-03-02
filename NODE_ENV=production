@@ -1,0 +1,23 @@
+2026-03-02T14:22:20.397Z [[32minfo[39m]: Starting Seerr version develop-local
+2026-03-02T14:22:21.384Z [[31merror[39m]: SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:428:18)
+    at loadESMFromCJS (node:internal/modules/cjs/loader:1537:24)
+    at Module._compile (node:internal/modules/cjs/loader:1688:5)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.28.6_babel-plugin-macros@3.1.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/server/require-hook.js:68:28)
+    at require (node:internal/modules/helpers:147:16)
+    at tryToRequire (/app/node_modules/.pnpm/typeorm@0.3.28_babel-plugin-macros@3.1.0_pg@8.19.0_sqlite3@5.1.7_ts-node@10.9.2_@swc+co_d42cb34a2471ea1f40f476304528f1ab/node_modules/typeorm/util/ImportUtils.js:21:17)
+    at importOrRequireFile (/app/node_modules/.pnpm/typeorm@0.3.28_babel-plugin-macros@3.1.0_pg@8.19.0_sqlite3@5.1.7_ts-node@10.9.2_@swc+co_d42cb34a2471ea1f40f476304528f1ab/node_modules/typeorm/util/ImportUtils.js:35:24)
+    at async /app/node_modules/.pnpm/typeorm@0.3.28_babel-plugin-macros@3.1.0_pg@8.19.0_sqlite3@5.1.7_ts-node@10.9.2_@swc+co_d42cb34a2471ea1f40f476304528f1ab/node_modules/typeorm/util/DirectoryExportedClassesLoader.js:47:41
+    at async Promise.all (index 0)
+    at async importClassesFromDirectories (/app/node_modules/.pnpm/typeorm@0.3.28_babel-plugin-macros@3.1.0_pg@8.19.0_sqlite3@5.1.7_ts-node@10.9.2_@swc+co_d42cb34a2471ea1f40f476304528f1ab/node_modules/typeorm/util/DirectoryExportedClassesLoader.js:50:18)
+    at async ConnectionMetadataBuilder.buildSubscribers (/app/node_modules/.pnpm/typeorm@0.3.28_babel-plugin-macros@3.1.0_pg@8.19.0_sqlite3@5.1.7_ts-node@10.9.2_@swc+co_d42cb34a2471ea1f40f476304528f1ab/node_modules/typeorm/connection/ConnectionMetadataBuilder.js:42:17)
+    at async DataSource.buildMetadatas (/app/node_modules/.pnpm/typeorm@0.3.28_babel-plugin-macros@3.1.0_pg@8.19.0_sqlite3@5.1.7_ts-node@10.9.2_@swc+co_d42cb34a2471ea1f40f476304528f1ab/node_modules/typeorm/data-source/DataSource.js:479:29)
+    at async DataSource.initialize (/app/node_modules/.pnpm/typeorm@0.3.28_babel-plugin-macros@3.1.0_pg@8.19.0_sqlite3@5.1.7_ts-node@10.9.2_@swc+co_d42cb34a2471ea1f40f476304528f1ab/node_modules/typeorm/data-source/DataSource.js:145:13)
+    at async /app/dist/index.js:97:11

@@ -50,7 +50,8 @@ const NotificationsNtfy = () => {
 
   const NotificationsNtfySchema = Yup.object().shape({
     url: Yup.string()
-      .when('enabled', {
+      /* @ts-ignore */
+.when('enabled', {
         is: true,
         then: Yup.string()
           .nullable()
@@ -63,7 +64,8 @@ const NotificationsNtfy = () => {
         isValidURL
       ),
     topic: Yup.string()
-      .when('enabled', {
+      /* @ts-ignore */
+.when('enabled', {
         is: true,
         then: Yup.string()
           .nullable()

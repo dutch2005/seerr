@@ -187,7 +187,7 @@ app
             sameSite: true,
             secure: !dev,
           },
-        })
+        }) as unknown as express.RequestHandler
       );
       server.use((req, res, next) => {
         res.cookie('XSRF-TOKEN', req.csrfToken(), {
@@ -219,13 +219,12 @@ app
       })
     );
     const apiDocs = YAML.load(API_SPEC_PATH);
-    server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
-    server.use(
-      OpenApiValidator.middleware({
-        apiSpec: API_SPEC_PATH,
-        validateRequests: true,
-      })
-    );
+    server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs) as express.RequestHandler);
+    const apiValidator = OpenApiValidator.middleware({
+      apiSpec: API_SPEC_PATH,
+      validateRequests: true,
+    }) as unknown as express.RequestHandler[];
+    apiValidator.forEach((middleware) => server.use(middleware));
     /**
      * This is a workaround to convert dates to strings before they are validated by
      * OpenAPI validator. Otherwise, they are treated as objects instead of strings
@@ -244,7 +243,7 @@ app
     server.use('/imageproxy', clearCookies, imageproxy);
     server.use('/avatarproxy', clearCookies, avatarproxy);
 
-    server.get('*', (req, res) => handle(req, res));
+    server.all('*path', (req, res) => handle(req, res));
     server.use(
       (
         err: { status: number; message: string; errors: string[] },

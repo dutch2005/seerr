@@ -42,7 +42,8 @@ const UserNotificationsDiscord = () => {
 
   const UserNotificationsDiscordSchema = Yup.object().shape({
     discordId: Yup.string()
-      .when('types', {
+      /* @ts-ignore */
+.when('types', {
         is: (types: number) => !!types,
         then: Yup.string()
           .nullable()

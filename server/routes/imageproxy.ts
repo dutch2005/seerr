@@ -30,7 +30,7 @@ function initTvdbImageProxy() {
   return _tvdbImageProxy;
 }
 
-router.get('/:type/*', async (req, res) => {
+router.get('/:type/*path', async (req, res) => {
   const imagePath = req.path.replace(/^\/\w+/, '');
 
   if (imagePath.startsWith('//') || imagePath.includes('://')) {
