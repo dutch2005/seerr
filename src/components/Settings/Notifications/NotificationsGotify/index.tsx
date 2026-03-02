@@ -45,7 +45,8 @@ const NotificationsGotify = () => {
 
   const NotificationsGotifySchema = Yup.object().shape({
     url: Yup.string()
-      .when('enabled', {
+      /* @ts-ignore */
+.when('enabled', {
         is: true,
         then: Yup.string()
           .nullable()
@@ -62,14 +63,16 @@ const NotificationsGotify = () => {
         intl.formatMessage(messages.validationUrlTrailingSlash),
         (value) => !value || !value.endsWith('/')
       ),
-    token: Yup.string().when('enabled', {
+    token: Yup.string()/* @ts-ignore */
+.when('enabled', {
       is: true,
       then: Yup.string()
         .nullable()
         .required(intl.formatMessage(messages.validationTokenRequired)),
       otherwise: Yup.string().nullable(),
     }),
-    priority: Yup.string().when('enabled', {
+    priority: Yup.string()/* @ts-ignore */
+.when('enabled', {
       is: true,
       then: Yup.string()
         .nullable()

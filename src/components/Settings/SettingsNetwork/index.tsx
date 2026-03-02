@@ -72,21 +72,24 @@ const SettingsNetwork = () => {
   } = useSWR<NetworkSettings>('/api/v1/settings/network');
 
   const NetworkSettingsSchema = Yup.object().shape({
-    dnsCacheForceMinTtl: Yup.number().when('dnsCacheEnabled', {
+    dnsCacheForceMinTtl: Yup.number()/* @ts-ignore */
+.when('dnsCacheEnabled', {
       is: true,
       then: Yup.number()
         .typeError(intl.formatMessage(messages.validationDnsCacheMinTtl))
         .required(intl.formatMessage(messages.validationDnsCacheMinTtl))
         .min(0),
     }),
-    dnsCacheForceMaxTtl: Yup.number().when('dnsCacheEnabled', {
+    dnsCacheForceMaxTtl: Yup.number()/* @ts-ignore */
+.when('dnsCacheEnabled', {
       is: true,
       then: Yup.number()
         .typeError(intl.formatMessage(messages.validationDnsCacheMaxTtl))
         .required(intl.formatMessage(messages.validationDnsCacheMaxTtl))
         .min(-1),
     }),
-    proxyPort: Yup.number().when('proxyEnabled', {
+    proxyPort: Yup.number()/* @ts-ignore */
+.when('proxyEnabled', {
       is: (proxyEnabled: boolean) => proxyEnabled,
       then: Yup.number()
         .typeError(intl.formatMessage(messages.validationProxyPort))

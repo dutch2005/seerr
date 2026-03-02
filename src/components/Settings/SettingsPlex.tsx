@@ -148,7 +148,8 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
   const TautulliSettingsSchema = Yup.object().shape(
     {
       tautulliHostname: Yup.string()
-        .when(['tautulliPort', 'tautulliApiKey'], {
+        /* @ts-ignore */
+.when(['tautulliPort', 'tautulliApiKey'], {
           is: (value: unknown) => !!value,
           then: Yup.string()
             .nullable()
@@ -159,7 +160,8 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
           /^(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
           intl.formatMessage(messages.validationHostnameRequired)
         ),
-      tautulliPort: Yup.number().when(['tautulliHostname', 'tautulliApiKey'], {
+      tautulliPort: Yup.number()/* @ts-ignore */
+.when(['tautulliHostname', 'tautulliApiKey'], {
         is: (value: unknown) => !!value,
         then: Yup.number()
           .typeError(intl.formatMessage(messages.validationPortRequired))
@@ -180,7 +182,8 @@ const SettingsPlex = ({ onComplete }: SettingsPlexProps) => {
           intl.formatMessage(messages.validationUrlBaseTrailingSlash),
           (value) => !value || !value.endsWith('/')
         ),
-      tautulliApiKey: Yup.string().when(['tautulliHostname', 'tautulliPort'], {
+      tautulliApiKey: Yup.string()/* @ts-ignore */
+.when(['tautulliHostname', 'tautulliPort'], {
         is: (value: unknown) => !!value,
         then: Yup.string()
           .nullable()

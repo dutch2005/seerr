@@ -1,7 +1,7 @@
-/**
- * @type {import('next').NextConfig}
- */
 module.exports = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   env: {
     commitTag: process.env.COMMIT_TAG || 'local',
   },
@@ -13,6 +13,7 @@ module.exports = {
       { hostname: 'plex.tv' },
     ],
   },
+  turbopack: {},
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,

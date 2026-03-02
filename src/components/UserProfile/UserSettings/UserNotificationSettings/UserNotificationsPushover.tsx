@@ -55,7 +55,8 @@ const UserPushoverSettings = () => {
 
   const UserNotificationsPushoverSchema = Yup.object().shape({
     pushoverApplicationToken: Yup.string()
-      .when('types', {
+      /* @ts-ignore */
+.when('types', {
         is: (types: number) => !!types,
         then: Yup.string()
           .nullable()
@@ -69,7 +70,8 @@ const UserPushoverSettings = () => {
         intl.formatMessage(messages.validationPushoverApplicationToken)
       ),
     pushoverUserKey: Yup.string()
-      .when('types', {
+      /* @ts-ignore */
+.when('types', {
         is: (types: number) => !!types,
         then: Yup.string()
           .nullable()

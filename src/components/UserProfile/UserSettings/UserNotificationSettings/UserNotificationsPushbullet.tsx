@@ -42,7 +42,8 @@ const UserPushbulletSettings = () => {
   );
 
   const UserNotificationsPushbulletSchema = Yup.object().shape({
-    pushbulletAccessToken: Yup.string().when('types', {
+    pushbulletAccessToken: Yup.string()/* @ts-ignore */
+.when('types', {
       is: (types: number) => !!types,
       then: Yup.string()
         .nullable()

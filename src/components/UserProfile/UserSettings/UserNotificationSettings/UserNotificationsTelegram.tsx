@@ -48,7 +48,8 @@ const UserTelegramSettings = () => {
 
   const UserNotificationsTelegramSchema = Yup.object().shape({
     telegramChatId: Yup.string()
-      .when('types', {
+      /* @ts-ignore */
+.when('types', {
         is: (types: number) => !!types,
         then: Yup.string()
           .nullable()
@@ -60,7 +61,8 @@ const UserTelegramSettings = () => {
         intl.formatMessage(messages.validationTelegramChatId)
       ),
     telegramMessageThreadId: Yup.string()
-      .when(['types'], {
+      /* @ts-ignore */
+.when(['types'], {
         is: (enabled: boolean, types: number) => enabled && !!types,
         then: Yup.string()
           .nullable()

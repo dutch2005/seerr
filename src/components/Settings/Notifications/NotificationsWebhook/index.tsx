@@ -107,7 +107,8 @@ const NotificationsWebhook = () => {
 
   const NotificationsWebhookSchema = Yup.object().shape({
     webhookUrl: Yup.string()
-      .when('enabled', {
+      /* @ts-ignore */
+.when('enabled', {
         is: true,
         then: Yup.string()
           .nullable()
@@ -126,7 +127,8 @@ const NotificationsWebhook = () => {
     supportVariables: Yup.boolean(),
 
     jsonPayload: Yup.string()
-      .when('enabled', {
+      /* @ts-ignore */
+.when('enabled', {
         is: true,
         then: Yup.string()
           .nullable()

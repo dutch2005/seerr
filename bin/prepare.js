@@ -5,5 +5,5 @@
  */
 const isCi = process.env.CI !== undefined;
 if (!isCi) {
-  require('husky').install();
+  require('child_process').execSync('npx husky init', { stdio: 'inherit' });
 }

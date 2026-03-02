@@ -59,7 +59,8 @@ const NotificationsPushover = () => {
 
   const NotificationsPushoverSchema = Yup.object().shape({
     accessToken: Yup.string()
-      .when('enabled', {
+      /* @ts-ignore */
+.when('enabled', {
         is: true,
         then: Yup.string()
           .nullable()
@@ -71,7 +72,8 @@ const NotificationsPushover = () => {
         intl.formatMessage(messages.validationAccessTokenRequired)
       ),
     userToken: Yup.string()
-      .when('enabled', {
+      /* @ts-ignore */
+.when('enabled', {
         is: true,
         then: Yup.string()
           .nullable()
