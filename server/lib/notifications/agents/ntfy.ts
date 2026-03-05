@@ -27,7 +27,7 @@ class NtfyAgent
     const { embedPoster } = settings.notifications.agents.ntfy;
 
     const topic = this.getSettings().options.topic;
-    const priority = 3;
+    const priority = this.getSettings().options.priority ?? 3;
 
     const title = payload.event
       ? `${payload.event} - ${payload.subject}`
@@ -136,16 +136,22 @@ class NtfyAgent
         authHeader = `Bearer ${settings.options.token}`;
       }
 
+      const headers: Record<string, string> = {};
+
+      if (authHeader) {
+        headers.Authorization = authHeader;
+      }
+
+      if (settings.options.markdown) {
+        headers['X-Markdown'] = 'yes';
+      }
+
       await axios.post(
         settings.options.url,
         this.buildPayload(type, payload),
-        authHeader
-          ? {
-              headers: {
-                Authorization: authHeader,
-              },
-            }
-          : undefined
+        {
+          headers,
+        }
       );
 
       return true;

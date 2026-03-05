@@ -15,63 +15,46 @@ import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-const messages = defineMessages(
-  'components.Settings.Notifications.NotificationsNtfy',
-  {
-    agentenabled: 'Enable Agent',
-    embedPoster: 'Embed Poster',
-    url: 'Server root URL',
-    topic: 'Topic',
-    usernamePasswordAuth: 'Username + Password authentication',
-    username: 'Username',
-    password: 'Password',
-    tokenAuth: 'Token authentication',
-    token: 'Token',
-    ntfysettingssaved: 'Ntfy notification settings saved successfully!',
-    ntfysettingsfailed: 'Ntfy notification settings failed to save.',
-    toastNtfyTestSending: 'Sending ntfy test notification…',
-    toastNtfyTestSuccess: 'Ntfy test notification sent!',
-    toastNtfyTestFailed: 'Ntfy test notification failed to send.',
-    validationNtfyUrl: 'You must provide a valid URL',
-    validationNtfyTopic: 'You must provide a topic',
-    validationTypes: 'You must select at least one notification type',
-  }
-);
+const messages = defineMessages('components.Settings.Notifications.NotificationsNtfy', {
+  agentenabled: 'Enable Agent',
+  embedPoster: 'Embed Poster',
+  url: 'Url',
+  topic: 'Topic',
+  priority: 'Priority',
+  priorityTip: 'Set the priority for ntfy notifications.',
+  markdown: 'Markdown Support',
+  markdownTip: 'Enable Markdown rendering for ntfy notifications',
+  authMethodUsernamePassword: 'Username/Password authentication',
+  username: 'Username',
+  password: 'Password',
+  tokenAuth: 'Token authentication',
+  token: 'Token',
+  ntfysettingssaved: 'Ntfy notification settings saved successfully!',
+  ntfysettingsfailed: 'Ntfy notification settings failed to save.',
+  toastNtfyTestSending: 'Sending ntfy test notification…',
+  toastNtfyTestSuccess: 'Ntfy test notification sent!',
+  toastNtfyTestFailed: 'Ntfy test notification failed to send.',
+  validationNtfyUrl: 'You must provide a valid URL',
+  validationNtfyTopic: 'You must provide a topic',
+});
+
+const NotificationsNtfySchema = Yup.object().shape({
+  url: Yup.string()
+    .required(globalMessages.validationNtfyUrl)
+    .test('is-url', globalMessages.validationNtfyUrl, (v) => isValidURL(v)),
+  topic: Yup.string().required(globalMessages.validationNtfyTopic),
+  priority: Yup.number().integer().min(0).max(5),
+  markdown: Yup.boolean(),
+});
 
 const NotificationsNtfy = () => {
   const intl = useIntl();
   const { addToast, removeToast } = useToasts();
   const [isTesting, setIsTesting] = useState(false);
-  const {
-    data,
-    error,
-    mutate: revalidate,
-  } = useSWR<NotificationAgentNtfy>('/api/v1/settings/notifications/ntfy');
 
-  const NotificationsNtfySchema = Yup.object().shape({
-    url: Yup.string()
-      .when('enabled', {
-        is: true,
-        then: Yup.string()
-          .nullable()
-          .required(intl.formatMessage(messages.validationNtfyUrl)),
-        otherwise: Yup.string().nullable(),
-      })
-      .test(
-        'valid-url',
-        intl.formatMessage(messages.validationNtfyUrl),
-        isValidURL
-      ),
-    topic: Yup.string()
-      .when('enabled', {
-        is: true,
-        then: Yup.string()
-          .nullable()
-          .required(intl.formatMessage(messages.validationNtfyUrl)),
-        otherwise: Yup.string().nullable(),
-      })
-      .defined(intl.formatMessage(messages.validationNtfyTopic)),
-  });
+  const { data, error, mutate } = useSWR<NotificationAgentNtfy>(
+    '/api/v1/settings/notifications/ntfy'
+  );
 
   if (!data && !error) {
     return <LoadingSpinner />;
@@ -79,6 +62,7 @@ const NotificationsNtfy = () => {
 
   return (
     <Formik
+      enableReinitialize
       initialValues={{
         enabled: data?.enabled,
         embedPoster: data?.embedPoster,
@@ -90,6 +74,8 @@ const NotificationsNtfy = () => {
         password: data?.options.password,
         authMethodToken: data?.options.authMethodToken,
         token: data?.options.token,
+        priority: data?.options.priority,
+        markdown: data?.options.markdown,
       }}
       validationSchema={NotificationsNtfySchema}
       onSubmit={async (values) => {
@@ -106,6 +92,8 @@ const NotificationsNtfy = () => {
               password: values.password,
               authMethodToken: values.authMethodToken,
               token: values.token,
+              priority: values.priority,
+              markdown: values.markdown,
             },
           });
 
@@ -113,41 +101,28 @@ const NotificationsNtfy = () => {
             appearance: 'success',
             autoDismiss: true,
           });
+          mutate();
         } catch (e) {
           addToast(intl.formatMessage(messages.ntfysettingsfailed), {
             appearance: 'error',
             autoDismiss: true,
           });
-        } finally {
-          revalidate();
         }
       }}
     >
-      {({
-        errors,
-        touched,
-        isSubmitting,
-        values,
-        isValid,
-        setFieldValue,
-        setFieldTouched,
-      }) => {
+      {({ values, errors, touched, setFieldValue, isSubmitting }) => {
         const testSettings = async () => {
           setIsTesting(true);
           let toastId: string | undefined;
           try {
-            addToast(
-              intl.formatMessage(messages.toastNtfyTestSending),
-              {
-                autoDismiss: false,
-                appearance: 'info',
-              },
-              (id) => {
-                toastId = id;
-              }
-            );
+            addToast(intl.formatMessage(messages.toastNtfyTestSending), {
+              appearance: 'info',
+              autoDismiss: false,
+              onDismiss: (id) => (toastId = id),
+            });
+
             await axios.post('/api/v1/settings/notifications/ntfy/test', {
-              enabled: true,
+              enabled: values.enabled,
               types: values.types,
               options: {
                 url: values.url,
@@ -157,6 +132,8 @@ const NotificationsNtfy = () => {
                 password: values.password,
                 authMethodToken: values.authMethodToken,
                 token: values.token,
+                priority: values.priority,
+                markdown: values.markdown,
               },
             });
 
@@ -164,16 +141,16 @@ const NotificationsNtfy = () => {
               removeToast(toastId);
             }
             addToast(intl.formatMessage(messages.toastNtfyTestSuccess), {
-              autoDismiss: true,
               appearance: 'success',
+              autoDismiss: true,
             });
           } catch (e) {
             if (toastId) {
               removeToast(toastId);
             }
             addToast(intl.formatMessage(messages.toastNtfyTestFailed), {
-              autoDismiss: true,
               appearance: 'error',
+              autoDismiss: true,
             });
           } finally {
             setIsTesting(false);
@@ -185,10 +162,20 @@ const NotificationsNtfy = () => {
             <div className="form-row">
               <label htmlFor="enabled" className="checkbox-label">
                 {intl.formatMessage(messages.agentenabled)}
-                <span className="label-required">*</span>
               </label>
               <div className="form-input-area">
                 <Field type="checkbox" id="enabled" name="enabled" />
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="types" className="text-label">
+                {intl.formatMessage(globalMessages.notificationtypes)}
+              </label>
+              <div className="form-input-area">
+                <NotificationTypeSelector
+                  currentTypes={values.types}
+                  onUpdate={(newTypes) => setFieldValue('types', newTypes)}
+                />
               </div>
             </div>
             <div className="form-row">
@@ -200,19 +187,51 @@ const NotificationsNtfy = () => {
               </div>
             </div>
             <div className="form-row">
+              <label htmlFor="priority" className="text-label">
+                {intl.formatMessage(messages.priority)}
+                <span className="label-tip">
+                  {intl.formatMessage(messages.priorityTip)}
+                </span>
+              </label>
+              <div className="form-input-area">
+                <Field
+                  type="number"
+                  id="priority"
+                  name="priority"
+                  className="short"
+                />
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="markdown" className="checkbox-label">
+                <span className="mr-2">
+                  {intl.formatMessage(messages.markdown)}
+                </span>
+              </label>
+              <div className="form-input-area">
+                <Field type="checkbox" id="markdown" name="markdown" />
+                <span className="ml-2 text-sm text-gray-500">
+                  {intl.formatMessage(messages.markdownTip)}
+                </span>
+              </div>
+            </div>
+            <div className="form-row">
               <label htmlFor="url" className="text-label">
                 {intl.formatMessage(messages.url)}
                 <span className="label-required">*</span>
               </label>
               <div className="form-input-area">
-                <div className="form-input-field">
-                  <Field id="url" name="url" type="text" inputMode="url" />
+                <div className="form-combined-field">
+                  <Field
+                    type="text"
+                    id="url"
+                    name="url"
+                    placeholder="https://ntfy.sh"
+                  />
                 </div>
-                {errors.url &&
-                  touched.url &&
-                  typeof errors.url === 'string' && (
-                    <div className="error">{errors.url}</div>
-                  )}
+                {errors.url && touched.url && (
+                  <div className="error">{errors.url}</div>
+                )}
               </div>
             </div>
             <div className="form-row">
@@ -221,14 +240,12 @@ const NotificationsNtfy = () => {
                 <span className="label-required">*</span>
               </label>
               <div className="form-input-area">
-                <div className="form-input-field">
-                  <Field id="topic" name="topic" type="text" />
+                <div className="form-combined-field">
+                  <Field type="text" id="topic" name="topic" />
                 </div>
-                {errors.topic &&
-                  touched.topic &&
-                  typeof errors.topic === 'string' && (
-                    <div className="error">{errors.topic}</div>
-                  )}
+                {errors.topic && touched.topic && (
+                  <div className="error">{errors.topic}</div>
+                )}
               </div>
             </div>
             <div className="form-row">
@@ -236,34 +253,25 @@ const NotificationsNtfy = () => {
                 htmlFor="authMethodUsernamePassword"
                 className="checkbox-label"
               >
-                <span className="mr-2">
-                  {intl.formatMessage(messages.usernamePasswordAuth)}
-                </span>
+                {intl.formatMessage(messages.authMethodUsernamePassword)}
               </label>
               <div className="form-input-area">
                 <Field
                   type="checkbox"
                   id="authMethodUsernamePassword"
                   name="authMethodUsernamePassword"
-                  disabled={values.authMethodToken}
-                  onChange={() => {
-                    setFieldValue(
-                      'authMethodUsernamePassword',
-                      !values.authMethodUsernamePassword
-                    );
-                  }}
                 />
               </div>
             </div>
             {values.authMethodUsernamePassword && (
-              <div className="ml-4 mr-2">
+              <>
                 <div className="form-row">
                   <label htmlFor="username" className="text-label">
                     {intl.formatMessage(messages.username)}
                   </label>
                   <div className="form-input-area">
-                    <div className="form-input-field">
-                      <Field id="username" name="username" type="text" />
+                    <div className="form-combined-field">
+                      <Field type="text" id="username" name="username" />
                     </div>
                   </div>
                 </div>
@@ -272,92 +280,67 @@ const NotificationsNtfy = () => {
                     {intl.formatMessage(messages.password)}
                   </label>
                   <div className="form-input-area">
-                    <div className="form-input-field">
+                    <div className="form-combined-field">
                       <SensitiveInput
                         as="field"
+                        type="password"
                         id="password"
                         name="password"
                       />
                     </div>
                   </div>
                 </div>
-              </div>
+              </>
             )}
             <div className="form-row">
               <label htmlFor="authMethodToken" className="checkbox-label">
-                <span className="mr-2">
-                  {intl.formatMessage(messages.tokenAuth)}
-                </span>
+                {intl.formatMessage(messages.tokenAuth)}
               </label>
               <div className="form-input-area">
                 <Field
                   type="checkbox"
                   id="authMethodToken"
                   name="authMethodToken"
-                  disabled={values.authMethodUsernamePassword}
-                  onChange={() => {
-                    setFieldValue('authMethodToken', !values.authMethodToken);
-                  }}
                 />
               </div>
             </div>
             {values.authMethodToken && (
-              <div className="form-row ml-4 mr-2">
+              <div className="form-row">
                 <label htmlFor="token" className="text-label">
                   {intl.formatMessage(messages.token)}
                 </label>
                 <div className="form-input-area">
-                  <div className="form-input-field">
-                    <SensitiveInput as="field" id="token" name="token" />
+                  <div className="form-combined-field">
+                    <SensitiveInput
+                      as="field"
+                      type="password"
+                      id="token"
+                      name="token"
+                    />
                   </div>
                 </div>
               </div>
             )}
-            <NotificationTypeSelector
-              currentTypes={values.enabled ? values.types || 0 : 0}
-              onUpdate={(newTypes) => {
-                setFieldValue('types', newTypes);
-                setFieldTouched('types');
-
-                if (newTypes) {
-                  setFieldValue('enabled', true);
-                }
-              }}
-              error={
-                values.enabled && !values.types && touched.types
-                  ? intl.formatMessage(messages.validationTypes)
-                  : undefined
-              }
-            />
             <div className="actions">
               <div className="flex justify-end">
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="warning"
-                    disabled={isSubmitting || !isValid || isTesting}
+                    disabled={isSubmitting || isTesting}
                     onClick={(e) => {
                       e.preventDefault();
                       testSettings();
                     }}
                   >
                     <BeakerIcon />
-                    <span>
-                      {isTesting
-                        ? intl.formatMessage(globalMessages.testing)
-                        : intl.formatMessage(globalMessages.test)}
-                    </span>
+                    <span>{intl.formatMessage(globalMessages.test)}</span>
                   </Button>
                 </span>
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
                     type="submit"
-                    disabled={
-                      isSubmitting ||
-                      !isValid ||
-                      isTesting ||
-                      (values.enabled && !values.types)
-                    }
+                    disabled={isSubmitting || isTesting}
                   >
                     <ArrowDownOnSquareIcon />
                     <span>

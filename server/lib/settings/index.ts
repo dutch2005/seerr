@@ -298,6 +298,11 @@ export interface NotificationAgentNtfy extends NotificationAgentConfig {
     password?: string;
     authMethodToken?: boolean;
     token?: string;
+<<<<<<< HEAD
+    priority?: number;
+=======
+    markdown?: boolean;
+>>>>>>> 3e84cc15 (feat(notifications): add ntfy markdown formatting)
   };
 }
 
@@ -531,6 +536,11 @@ class Settings {
             options: {
               url: '',
               topic: '',
+<<<<<<< HEAD
+              priority: 3,
+=======
+              markdown: false,
+>>>>>>> 3e84cc15 (feat(notifications): add ntfy markdown formatting)
             },
           },
         },
