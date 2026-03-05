@@ -628,6 +628,8 @@
   "components.Settings.Notifications.NotificationsGotify.validationUrlTrailingSlash": "URL must not end in a trailing slash",
   "components.Settings.Notifications.NotificationsNtfy.agentenabled": "Enable Agent",
   "components.Settings.Notifications.NotificationsNtfy.embedPoster": "Embed Poster",
+  "components.Settings.Notifications.NotificationsNtfy.markdown": "Markdown Support",
+  "components.Settings.Notifications.NotificationsNtfy.markdownTip": "Enable Markdown rendering for ntfy notifications",
   "components.Settings.Notifications.NotificationsNtfy.ntfysettingsfailed": "Ntfy notification settings failed to save.",
   "components.Settings.Notifications.NotificationsNtfy.ntfysettingssaved": "Ntfy notification settings saved successfully!",
   "components.Settings.Notifications.NotificationsNtfy.password": "Password",

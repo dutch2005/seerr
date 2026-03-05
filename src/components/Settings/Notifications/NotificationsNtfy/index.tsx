@@ -28,6 +28,8 @@ const messages = defineMessages(
     tokenAuth: 'Token authentication',
     token: 'Token',
     priority: 'Priority',
+    markdown: 'Markdown Support',
+    markdownTip: 'Enable Markdown rendering for ntfy notifications',
     ntfysettingssaved: 'Ntfy notification settings saved successfully!',
     ntfysettingsfailed: 'Ntfy notification settings failed to save.',
     toastNtfyTestSending: 'Sending ntfy test notification…',
@@ -101,6 +103,7 @@ const NotificationsNtfy = () => {
         authMethodToken: data?.options.authMethodToken,
         token: data?.options.token,
         priority: data?.options.priority,
+        markdown: data?.options.markdown,
       }}
       validationSchema={NotificationsNtfySchema}
       onSubmit={async (values) => {
@@ -118,6 +121,7 @@ const NotificationsNtfy = () => {
               authMethodToken: values.authMethodToken,
               token: values.token,
               priority: values.priority,
+              markdown: values.markdown,
             },
           });
 
@@ -170,6 +174,7 @@ const NotificationsNtfy = () => {
                 authMethodToken: values.authMethodToken,
                 token: values.token,
                 priority: values.priority,
+                markdown: values.markdown,
               },
             });
 
@@ -340,6 +345,19 @@ const NotificationsNtfy = () => {
                     <option value={5}>Urgent</option>
                   </Field>
                 </div>
+              </div>
+            </div>
+            <div className="form-row">
+              <label htmlFor="markdown" className="checkbox-label">
+                <span className="mr-2">
+                  {intl.formatMessage(messages.markdown)}
+                </span>
+              </label>
+              <div className="form-input-area">
+                <Field type="checkbox" id="markdown" name="markdown" />
+                <span className="ml-2 text-sm text-gray-500">
+                  {intl.formatMessage(messages.markdownTip)}
+                </span>
               </div>
             </div>
             <NotificationTypeSelector

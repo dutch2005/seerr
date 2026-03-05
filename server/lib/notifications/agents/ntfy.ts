@@ -136,16 +136,22 @@ class NtfyAgent
         authHeader = `Bearer ${settings.options.token}`;
       }
 
+      const headers: Record<string, string> = {};
+
+      if (authHeader) {
+        headers.Authorization = authHeader;
+      }
+
+      if (settings.options.markdown) {
+        headers['X-Markdown'] = 'yes';
+      }
+
       await axios.post(
         settings.options.url,
         this.buildPayload(type, payload),
-        authHeader
-          ? {
-              headers: {
-                Authorization: authHeader,
-              },
-            }
-          : undefined
+        {
+          headers,
+        }
       );
 
       return true;
