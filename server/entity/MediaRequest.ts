@@ -295,16 +295,13 @@ export class MediaRequest {
         return true;
       });
 
-      // hacky way to prioritize rules
-      // TODO: make this better
+      // Sort override rules by specificity (weighted) and then by ID (newer rules first)
       const prioritizedRule = appliedOverrideRules.sort((a, b) => {
-        const keys: (keyof OverrideRule)[] = ['genre', 'language', 'keywords'];
+        if (a.specificity !== b.specificity) {
+          return b.specificity - a.specificity;
+        }
 
-        const aSpecificity = keys.filter((key) => a[key] !== null).length;
-        const bSpecificity = keys.filter((key) => b[key] !== null).length;
-
-        // Take the rule with the most specific condition first
-        return bSpecificity - aSpecificity;
+        return b.id - a.id;
       })[0];
 
       if (prioritizedRule) {
