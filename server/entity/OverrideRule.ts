@@ -43,6 +43,15 @@ class OverrideRule {
   })
   public updatedAt: Date;
 
+  public get specificity(): number {
+    let score = 0;
+    if (this.users) score += 1000;
+    if (this.keywords) score += 100;
+    if (this.genre) score += 10;
+    if (this.language) score += 1;
+    return score;
+  }
+
   constructor(init?: Partial<OverrideRule>) {
     Object.assign(this, init);
   }
