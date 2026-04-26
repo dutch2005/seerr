@@ -33,9 +33,24 @@ function initTvdbImageProxy() {
 router.get('/:type/*', async (req, res) => {
   const imagePath = req.path.replace(/^\/\w+/, '');
 
-  if (imagePath.startsWith('//') || imagePath.includes('://')) {
-    logger.error('Invalid URL for image proxy', { imagePath });
-    return res.status(403).send('Invalid URL for image proxy');
+  if (req.params.type === 'tmdb') {
+    if (
+      !imagePath.match(/^(\/t\/p\/[\w-]{1,255}){1}(\/[\w-]{1,255})+\.(jpg|jpeg|png|webp|svg)$/)
+    ) {
+      logger.error('Invalid TMDB image path for image proxy', { imagePath });
+      return res.status(403).send('Invalid TMDB image path for image proxy');
+    }
+  } else if (req.params.type === 'tvdb') {
+    if (!imagePath.match(/^(\/[\w-]{1,255})+\.(jpg|jpeg|png|webp|svg)$/)) {
+      logger.error('Invalid TVDB image path for image proxy', { imagePath });
+      return res.status(403).send('Invalid TVDB image path for image proxy');
+    }
+  } else {
+    logger.error('Unsupported image type', {
+      imagePath,
+      type: req.params.type,
+    });
+    return res.status(400).send('Unsupported image type');
   }
 
   try {
@@ -45,12 +60,7 @@ router.get('/:type/*', async (req, res) => {
     } else if (req.params.type === 'tvdb') {
       imageData = await initTvdbImageProxy().getImage(imagePath);
     } else {
-      logger.error('Unsupported image type', {
-        imagePath,
-        type: req.params.type,
-      });
-      res.status(400).send('Unsupported image type');
-      return;
+      return res.status(400).send('Unsupported image type');
     }
 
     res.writeHead(200, {
