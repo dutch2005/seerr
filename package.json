@@ -206,6 +206,7 @@
       "sqlite3"
     ],
     "overrides": {
+      "shell-quote": "1.8.4",
       "sqlite3>node-gyp": "8.4.1",
       "@types/express-session": "1.18.2"
     }
